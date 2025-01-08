@@ -149,7 +149,7 @@ describe('App E2E Tests', () => {
           {
             id: 1,
             title: "Can't Stop the Music I",
-            year: 1980,
+            year: 1988,
             winner: true,
           },
           {
@@ -173,7 +173,7 @@ describe('App E2E Tests', () => {
           {
             id: 27,
             title: 'Cannonball Run II',
-            year: 1984,
+            year: 1983,
             winner: true,
           },
         ],
@@ -191,7 +191,7 @@ describe('App E2E Tests', () => {
           {
             id: 39,
             title: 'Cobra',
-            year: 2024,
+            year: 2000,
             winner: true,
           },
         ],
@@ -203,13 +203,13 @@ describe('App E2E Tests', () => {
           {
             id: 2,
             title: 'Cruising',
-            year: 2004,
+            year: 2000,
             winner: true,
           },
           {
             id: 52,
             title: 'The Karate Kid Part III',
-            year: 2024,
+            year: 2020,
             winner: true,
           },
         ],
@@ -250,7 +250,7 @@ describe('App E2E Tests', () => {
             {
               id: 1,
               title: "Can't Stop the Music I",
-              year: 1980,
+              year: 1988,
               winner: true,
             },
             {
@@ -274,7 +274,7 @@ describe('App E2E Tests', () => {
             {
               id: 27,
               title: 'Cannonball Run II',
-              year: 1984,
+              year: 1983,
               winner: true,
             },
           ],
@@ -292,7 +292,7 @@ describe('App E2E Tests', () => {
             {
               id: 39,
               title: 'Cobra',
-              year: 2024,
+              year: 2000,
               winner: true,
             },
           ],
@@ -304,13 +304,13 @@ describe('App E2E Tests', () => {
             {
               id: 2,
               title: 'Cruising',
-              year: 2004,
+              year: 2000,
               winner: true,
             },
             {
               id: 52,
               title: 'The Karate Kid Part III',
-              year: 2024,
+              year: 2020,
               winner: true,
             },
           ],
@@ -330,29 +330,29 @@ describe('App E2E Tests', () => {
       // Valida o intervalo esperado com base na base mockada
       expect(response.body.min).toEqual([
         {
-          producer: 'Albert S. Ruddy',
-          previousWin: 1982,
-          followingWin: 1984,
-          interval: 2,
+          producer: 'Allan Carr',
+          previousWin: 1988,
+          followingWin: 1989,
+          interval: 1,
         },
         {
-          producer: 'Allan Carr',
-          previousWin: 1980,
-          followingWin: 1989,
-          interval: 9,
+          producer: 'Albert S. Ruddy',
+          previousWin: 1982,
+          followingWin: 1983,
+          interval: 1,
         },
       ]);
       expect(response.body.max).toEqual([
         {
           producer: 'Yoram Globus and Menahem Golan',
           previousWin: 1980,
-          followingWin: 2024,
-          interval: 44,
+          followingWin: 2000,
+          interval: 20,
         },
         {
           producer: 'Jerry Weintraub',
-          previousWin: 2004,
-          followingWin: 2024,
+          previousWin: 2000,
+          followingWin: 2020,
           interval: 20,
         },
       ]);

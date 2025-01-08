@@ -20,10 +20,10 @@ export class ProducerService {
 
     for (let i = 0; i < producers.length; i++) {
       const producer = producers[i];
-      const { min, max } = this.organizeInterval(producer);
+      const { min, max } = this.sortInterval(producer);
 
-      this.compareInterval(max, maxInterval, 'max');
-      this.compareInterval(min, minInterval, 'min');
+      this.updateInterval(max, maxInterval, 'max');
+      this.updateInterval(min, minInterval, 'min');
     }
 
     return {
@@ -32,31 +32,45 @@ export class ProducerService {
     };
   }
 
-  private compareInterval(
-    element: ProducerInterval,
+  private updateInterval(
+    element: ProducerInterval[],
     interval: ProducerInterval[],
     direction: 'min' | 'max',
   ): void {
-    if (!element) return;
-
-    interval.push(element);
+    if (element.length === 0) return;
 
     if (direction === 'min') {
-      interval.sort((a, b) => a.interval - b.interval);
+      if (
+        interval.length === 0 ||
+        element[0].interval < interval[element.length - 1].interval
+      ) {
+        interval.length = 0;
+        interval.push(...element);
+      } else if (
+        element[0].interval === interval[element.length - 1].interval
+      ) {
+        interval.push(...element);
+      }
     } else {
-      interval.sort((a, b) => b.interval - a.interval);
-    }
-
-    if (interval.length > 2) {
-      interval.length = 2;
+      if (
+        interval.length === 0 ||
+        element[0].interval > interval[element.length - 1].interval
+      ) {
+        interval.length = 0;
+        interval.push(...element);
+      } else if (
+        element[0].interval === interval[element.length - 1].interval
+      ) {
+        interval.push(...element);
+      }
     }
   }
 
-  private organizeInterval(producer: ProducerEntity): {
-    min: ProducerInterval;
-    max: ProducerInterval;
+  private sortInterval(producer: ProducerEntity): {
+    min: ProducerInterval[];
+    max: ProducerInterval[];
   } {
-    let producerByInterval: ProducerInterval[] = [];
+    const producerByInterval: ProducerInterval[] = [];
 
     //Ordena por maior ano
     const moviesByYear = producer.movies
@@ -65,7 +79,7 @@ export class ProducerService {
 
     if (moviesByYear.length < 2) {
       // Retorna valores padrão se não houver filmes suficientes
-      return { min: null, max: null };
+      return { min: [], max: [] };
     }
 
     //organiza por intervalo
@@ -84,18 +98,35 @@ export class ProducerService {
       });
     }
 
-    //Ordena por maior intervalo
-    producerByInterval = producerByInterval.sort(
-      (a, b) => b.interval - a.interval,
-    );
+    /** Lógica que deve ser corrigida**/
 
-    let min: ProducerInterval;
-    let max: ProducerInterval;
+    let min: ProducerInterval[] = [];
+    let max: ProducerInterval[] = [];
 
-    //Obtem o primeiro e ultimo intervalo
-    if (producerByInterval.length > 0) {
-      max = producerByInterval[0];
-      min = producerByInterval[producerByInterval.length - 1];
+    for (let i = 0; i < producerByInterval.length; i++) {
+      const producer = producerByInterval[i];
+
+      if (min.length === 0) {
+        min = [producer];
+      } else {
+        if (producer.interval === min[0].interval) {
+          min.push(producer);
+        } else {
+          min = [producer];
+        }
+      }
+
+      if (max.length === 0) {
+        max = [producer];
+      } else {
+        if (producer.interval >= max[0].interval) {
+          if (producer.interval === min[0].interval) {
+            max.push(producer);
+          } else {
+            max = [producer];
+          }
+        }
+      }
     }
 
     return { min, max };
