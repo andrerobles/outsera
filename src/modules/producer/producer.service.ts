@@ -63,6 +63,11 @@ export class ProducerService {
       .filter((movie) => movie.winner)
       .sort((a, b) => b.year - a.year);
 
+    if (moviesByYear.length < 2) {
+      // Retorna valores padrão se não houver filmes suficientes
+      return { min: null, max: null };
+    }
+
     //organiza por intervalo
     let last: MovieEntity | null;
     for (let i = 0; i < moviesByYear.length; i++) {
@@ -93,10 +98,7 @@ export class ProducerService {
       min = producerByInterval[producerByInterval.length - 1];
     }
 
-    return {
-      min,
-      max,
-    };
+    return { min, max };
   }
 
   public async getAllProducers(): Promise<ProducerEntity[]> {

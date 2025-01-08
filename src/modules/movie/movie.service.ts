@@ -22,7 +22,7 @@ export class MovieService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    this.insertFromFile();
+    await this.insertFromFile();
   }
 
   public async getAllMovies(): Promise<MovieEntity[]> {

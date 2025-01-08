@@ -4,11 +4,14 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Iniciar o Programa",
+      "name": "Debug Test E2E",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test:e2e"],
+      "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/modules/movie/movie.service.ts",
-      "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+      "env": {
+        "NODE_ENV": "test"
+      }
     }
   ]
 }

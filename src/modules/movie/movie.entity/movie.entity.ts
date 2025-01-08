@@ -24,9 +24,9 @@ export class MovieEntity {
 
   @ManyToMany(() => StudioEntity, (studio) => studio.movies)
   @JoinTable()
-  studios: StudioEntity[];
+  studios?: StudioEntity[];
 
   @ManyToMany(() => ProducerEntity, (producer) => producer.movies)
   @JoinTable()
-  producers: ProducerEntity[];
+  producers?: ProducerEntity[];
 }
