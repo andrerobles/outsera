@@ -6,6 +6,11 @@ import { MovieService } from '../src/modules/movie/movie.service';
 import { AppModule } from '../src/app.module';
 import { ProducerService } from '../src/modules/producer/producer.service';
 import { ProducerEntity } from 'src/modules/producer/producer.entity/producer.entity';
+import * as path from 'path';
+
+import { parseCSV } from '../src/utils/parse';
+
+jest.setTimeout(60000);
 
 describe('App E2E Tests', () => {
   let app: INestApplication;
@@ -43,8 +48,7 @@ describe('App E2E Tests', () => {
     await app.init();
   });
 
-  // ProducerController Tests
-  describe('ProducerController', () => {
+  describe('ProducerController - Sem dados predefinidos', () => {
     it('/producers (GET) - deve retornar uma lista vazia inicialmente', async () => {
       const response = await request(app.getHttpServer())
         .get('/producers')
@@ -61,8 +65,7 @@ describe('App E2E Tests', () => {
     });
   });
 
-  // StudioController Tests
-  describe('StudioController', () => {
+  describe('StudioController - Sem dados predefinidos', () => {
     it('/studios (GET) - deve retornar uma lista vazia inicialmente', async () => {
       const response = await request(app.getHttpServer())
         .get('/studios')
@@ -71,8 +74,53 @@ describe('App E2E Tests', () => {
     });
   });
 
-  // MovieController Tests
-  describe('MovieController', () => {
+  describe('MovieController - Verificação de integridade do arquivo', () => {
+    let app: INestApplication;
+
+    beforeAll(async () => {
+      const moduleFixture: TestingModule = await Test.createTestingModule({
+        imports: [AppModule],
+      }).compile();
+
+      app = moduleFixture.createNestApplication();
+      await app.init();
+    });
+
+    it('/movies (GET) - deve retornar erro se o resultado estiver diferente do arquivo', async () => {
+      // Carrega o arquivo padrão
+      const filePath = path.resolve('src', 'data', 'Movielist.csv');
+      const expectedMovies = await parseCSV(filePath);
+
+      // Faz uma requisição à API para obter os dados
+      const response = await request(app.getHttpServer())
+        .get('/movies')
+        .expect(200);
+
+      const apiMovies = response.body;
+
+      expect(apiMovies).toHaveLength(expectedMovies.length);
+
+      expectedMovies.forEach((expectedMovie, index) => {
+        const apiMovie = apiMovies[index];
+
+        expect(apiMovie.title).toBe(expectedMovie.title);
+        expect(apiMovie.year).toBe(expectedMovie.year);
+        expect(apiMovie.winner).toBe(expectedMovie.winner);
+
+        const expectedProducers = expectedMovie.producers.sort();
+        const apiProducers = apiMovie.producers
+          .map((producer) => producer.name)
+          .sort();
+        expect(apiProducers).toEqual(expectedProducers);
+
+        const expectedStudios = expectedMovie.studios.sort();
+        const apiStudios = apiMovie.studios.map((studio) => studio.name).sort();
+        expect(apiStudios).toEqual(expectedStudios);
+      });
+    });
+  });
+
+  describe('MovieController - Sem dados predefinidos', () => {
     it('/movies (GET) - deve retornar uma lista vazia inicialmente', async () => {
       const response = await request(app.getHttpServer())
         .get('/movies')

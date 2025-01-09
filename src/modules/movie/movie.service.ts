@@ -4,9 +4,8 @@ import { Repository } from 'typeorm';
 import { MovieEntity } from './movie.entity/movie.entity';
 import { StudioEntity } from '../studio/studio.entity/studio.entity';
 import { ProducerEntity } from '../producer/producer.entity/producer.entity';
-import * as fs from 'fs';
+import { parseCSV } from '../../utils/parse';
 import * as path from 'path';
-import * as csv from 'csv-parser';
 
 @Injectable()
 export class MovieService implements OnModuleInit {
@@ -83,8 +82,14 @@ export class MovieService implements OnModuleInit {
   }
 
   private async insertFromFile() {
+    const existingMovies = await this.movieRepository.count();
+    if (existingMovies > 0) {
+      console.log('Os filmes já foram importados. Operação cancelada.');
+      return;
+    }
+
     const filePath = path.resolve('src', 'data', 'Movielist.csv');
-    const movies = await this.parseCSV(filePath);
+    const movies = await parseCSV(filePath);
 
     for (const movie of movies) {
       const producers = await Promise.all(
@@ -125,24 +130,5 @@ export class MovieService implements OnModuleInit {
     }
 
     console.log('Filmes importados com sucesso!');
-  }
-
-  private async parseCSV(filePath: string): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      const results: any[] = [];
-      fs.createReadStream(filePath)
-        .pipe(csv({ separator: ';' }))
-        .on('data', (data) => {
-          results.push({
-            year: parseInt(data.year, 10),
-            title: data.title,
-            studios: data.studios.split(/,|and/).map((s) => s.trim()),
-            producers: data.producers.split(/,|and/).map((p) => p.trim()),
-            winner: data.winner.toLowerCase().trim() === 'yes',
-          });
-        })
-        .on('end', () => resolve(results))
-        .on('error', (err) => reject(err));
-    });
   }
 }
