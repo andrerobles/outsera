@@ -98,8 +98,6 @@ export class ProducerService {
       });
     }
 
-    /** Lógica que deve ser corrigida**/
-
     let min: ProducerInterval[] = [];
     let max: ProducerInterval[] = [];
 

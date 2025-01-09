@@ -136,8 +136,8 @@ export class MovieService implements OnModuleInit {
           results.push({
             year: parseInt(data.year, 10),
             title: data.title,
-            studios: data.studios.split(',').map((s) => s.trim()),
-            producers: data.producers.split(',').map((p) => p.trim()),
+            studios: data.studios.split(/,|and/).map((s) => s.trim()),
+            producers: data.producers.split(/,|and/).map((p) => p.trim()),
             winner: data.winner.toLowerCase().trim() === 'yes',
           });
         })
